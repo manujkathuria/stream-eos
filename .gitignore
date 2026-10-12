@@ -1,0 +1,18 @@
+# Local Kafka runtime data, logs, and pid
+kafka/data/
+kafka/logs/
+kafka/.kafka.pid
+kafka/.cluster_id
+
+# Compiled Go binaries
+bin/
+
+# Local service configuration
+.env
+**/.env
+
+# Local editor settings and diagnostic artifacts
+.idea/
+.DS_Store
+*.pprof
+*.test

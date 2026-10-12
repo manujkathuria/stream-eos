@@ -1,0 +1,8 @@
+go 1.27.1
+
+use (
+	./process
+	./ingestor
+	./pkg
+	./websocket-source
+)
