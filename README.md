@@ -59,3 +59,14 @@ The performance demo stops intake, drains processing, and verifies event IDs and
 Both demos print PASS/FAIL, exit non-zero on failure, and clean up their services and isolated topics while leaving Kafka running.
 
 See [demo prerequisites, expected output, and cleanup](process/docs/demo.md). Use each project’s README for individual run commands.
+
+## Automated verification (CI)
+
+Every push to `main` and all pull requests run GitHub Actions workflow checks using the Go version declared in [go.work](go.work):
+
+- **Build (`make build`):** compiles binaries for `websocket-source`, `ingestor`, and `process`.
+- **Static analysis (`make vet`):** runs `go vet` across all workspace modules (`websocket-source`, `pkg`, `ingestor`, `process`).
+- **Unit and race tests (`make test`):** runs `go test -race ./...` across all workspace modules.
+
+**Excluded from CI:** Broker-backed integration tests (`STREAM_EOS_KAFKA_TEST=1`), performance benchmarks, and end-to-end pipeline demos (`make demo`, `make demo-performance`) require an active, transaction-capable Kafka cluster and run locally or in dedicated benchmark environments.
+

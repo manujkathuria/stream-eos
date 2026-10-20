@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  check:
+    name: Go checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.work'
+          cache: true
+          cache-dependency-path: '**/go.sum'
+
+      - name: Build all modules
+        run: make build
+
+      - name: Static analysis (go vet)
+        run: make vet
+
+      - name: Unit and race tests
+        run: make test
