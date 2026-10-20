@@ -66,7 +66,7 @@ Reuse established decisions rather than restarting discovery for already-scoped 
 
 ## Repository organization
 
-Root `docs/` is the cross-project showcase. Implementation docs belong to the owning project; consumer walkthroughs were removed in favor of `process/docs/journey.md`. Each service builds to its own `bin/`. Keep root workspace/build/agent files and the existing local `kafka/` infrastructure directory; do not move or stop its running broker as part of cleanup.
+README.md owns the showcase overview and selected evidence; `docs/design-decisions.md` records cross-project tradeoffs. The complete deduplication walkthrough lives at `process/docs/deduplication.md`. Implementation docs belong to the owning project; consumer walkthroughs were removed in favor of `process/docs/journey.md`. Each service builds to its own `bin/`. Keep root workspace/build/agent files and the existing local `kafka/` infrastructure directory; do not move or stop its running broker as part of cleanup.
 
 Do not restore the removed legacy technical documents or consumer walkthroughs. Keep project documentation focused on the existing READMEs, journeys, and benchmark evidence, alongside root showcase docs.
 

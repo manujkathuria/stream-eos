@@ -4,7 +4,7 @@ Independent Go service: Kafka input → partition-local FIFO deduplication → J
 
 Run `make demo` from the repository root for the [verified showcase demo](docs/demo.md).
 
-Start with the [code journey](docs/journey.md). For deduplication, read the [simple explanation](../docs/deduplication.md), then the [implementation internals](docs/deduplication-internals.md).
+Start with the [code journey](docs/journey.md). The [deduplication walkthrough](docs/deduplication.md) connects a small ring-buffer example to the Go structures, transaction ordering, and restart recovery.
 
 ```text
 cmd/process/       Config, startup, recovery wiring, lifecycle
