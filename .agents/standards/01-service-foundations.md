@@ -1,33 +1,25 @@
 # Service foundations: config, logging, and context
 
-Apply when creating a long-running service or changing its startup, configuration, logging, or shutdown. These are service responsibilities; reusable libraries receive the dependencies they need.
+Apply when creating a long-running service or changing startup, configuration, logging, or shutdown.
 
 ## Configuration
 
-- Each service owns a typed configuration and validates it once before accepting work. Keep environment access and parsing out of processing loops.
-- Load environment variables, with `.env` as a local-development convenience. Existing environment values take precedence over `.env`, followed by defaults. Explicit command-line overrides, when supported, have highest priority.
-- Commit `.env.example` with supported settings and safe example values; ignore `.env`. Do not log secret values. A missing optional `.env` is acceptable; malformed or explicitly required configuration must fail clearly.
-- Pass validated settings to components. Share small loading utilities when useful, not one global configuration for unrelated services.
+- Each service owns typed configuration and validates it before accepting work. Keep environment reads out of request and processing loops.
+- Where supported, precedence is explicit command-line settings, environment, optional local .env, then defaults. Document supported sources. Missing optional .env is acceptable; malformed or explicitly required configuration fails clearly.
+- Commit safe .env.example values and ignore local .env files. Never log secrets. Pass validated configuration explicitly rather than using global service state.
 
 ## Logging
 
-- Create a service-owned structured `slog` logger using the shared logger package. Pass it to components that log; avoid replacing global defaults or reading a logger from a global variable.
-- Attach stable service attributes during setup. Prefer typed `LogAttrs` in frequent calls and guard expensive disabled-level calculations with `Enabled`.
-- Log lifecycle events and actionable errors; avoid per-event logging in streaming loops. The service owns output resources. State whether logging is synchronous, buffered, or asynchronous rather than assuming it is free.
+- Construct a service-owned structured slog logger and pass it to components that log. A reusable constructor can be shared when justified; no particular logger package is required.
+- Add stable service attributes during setup and request or operation context where useful. Log lifecycle events and actionable errors without exposing secrets or sensitive payloads.
+- Avoid unnecessary hot-path logging and expensive disabled-log calculations. The service owns log outputs and cleanup; measure logging costs when relevant.
 
-## Context and graceful shutdown
+## Context and lifecycle
 
-- The command owns a signal-aware root context. Pass context explicitly into cancelable operations; do not introduce a shared global context.
-- Give every server, connection, worker, and goroutine a lifecycle owner. Cancellation must unblock I/O and processing, not just set a flag.
-- Define shutdown behavior: stop intake, finish or abandon in-flight work according to the delivery contract, release resources, and wait for owned goroutines. Use a bounded shutdown deadline that can still perform cleanup after the run context is canceled.
-- Handle upgraded WebSocket sessions explicitly: HTTP server shutdown alone does not close them. Transactional components must preserve their established commit/abort and unknown-outcome rules during shutdown.
-- Return errors to the command. Perform cleanup before the command chooses an exit code; distinguish expected shutdown from failures in logs.
+- Command code owns signals, dependency wiring, and the root context. Pass context explicitly through cancelable request, network, and database operations.
+- Give servers, connections, workers, and goroutines clear lifecycle owners. Cancellation must reach blocking operations; document client limitations.
+- Set appropriate request, I/O, and shutdown deadlines. Stop intake and finish or abandon in-flight work according to the operation's contract. Cleanup needs a bounded context that remains usable after run cancellation.
+- Track and close upgraded WebSocket sessions explicitly; HTTP shutdown alone does not close them. For long-lived connections use appropriate heartbeat and idle deadlines rather than ordinary request-duration assumptions.
+- Return errors to the command, release resources before exit, and distinguish expected shutdown from failures.
 
-## Startup journey
-
-```text
-Load and validate config → create logger → create signal context
-    → construct dependencies → run service → bounded shutdown → exit
-```
-
-Verify invalid configuration, precedence, and cancellation/shutdown behavior when changing those contracts. Applying this standard does not authorize unrelated migrations of existing services.
+Verify configuration precedence, invalid inputs, and shutdown behavior when changing those contracts. This standard does not authorize unrelated service migrations.

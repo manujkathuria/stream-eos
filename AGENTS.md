@@ -73,3 +73,7 @@ Do not restore the removed legacy technical documents or consumer walkthroughs. 
 `make demo` builds real source/ingestor/process executables and runs the bounded showcase in `process/cmd/demo`. It requires an existing transaction-capable broker, uses isolated topics and child-service configuration, verifies committed output and process restart recovery, and cleans up its own resources without stopping Kafka. See `process/docs/demo.md`.
 
 `make demo-performance` runs the live source → A/B → Kafka → process → Kafka pipeline for a bounded configured duration/rate, then drains to a captured checkpoint and verifies output. It accepts `INPUT_TPS` (unique quote events/sec before A/B copies) and `DURATION`, with 10 fixed demo instruments. Post-run verification uses bounded-memory external sorting of event IDs and SHA-256 payload/key fingerprints; temporary disk scales with the run. It reports achieved throughput including startup/drain, not maximum capacity or proof of pre-Kafka source delivery.
+
+## Development workflow
+
+Follow the agreed [development workflow](.agents/standards/development-workflow.md) for issue structure, branches, optional draft PRs, verification, and merging. This standard is the confirmed baseline; merge strategy and release policy remain project decisions. Existing Git skill suggestions do not finalize those policies.

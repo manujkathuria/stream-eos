@@ -1,10 +1,22 @@
-# Benchmarkable data journeys
+# Performance and measurement
 
-Apply when designing or refactoring streaming stages, changing hot paths, or adding benchmarks.
+Apply when designing measurable stages, investigating performance, tuning concurrency or resource limits, or making performance claims.
 
-- Structure streaming code around meaningful stages of the data journey. Give each stage one clear responsibility and explicit inputs, outputs, and buffer-ownership contracts. Name functions after the work they perform, such as `generateUpdate` and `buildMessage`.
-- Keep coordination concerns—history, locking, pacing, cancellation, and lifecycle—with the coordinator. Make dependencies such as timestamps explicit when that improves correctness and repeatable testing.
-- Use caller-owned reusable storage where appropriate. Document when a stage may mutate, retain, or reuse that storage; preserve ownership and completion guarantees across stage boundaries.
-- Benchmark stages independently, then measure the connected flow. State whether setup, synchronization, allocation, and network I/O are included; component results do not establish end-to-end throughput.
-- Benchmarks must call the same implementation used in production rather than duplicate its logic. Extract meaningful responsibilities when needed to make that possible.
-- Add boundaries where responsibilities differ. Do not create extra interfaces, wrappers, or tiny functions solely to make benchmarks possible.
+## Design for measurement
+
+- Structure code around meaningful operations with explicit inputs, outputs, ownership, and failure behavior. Keep lifecycle and coordination with their owners.
+- Benchmarks call the production implementation. Add boundaries when responsibilities differ, not just to manufacture benchmark wrappers.
+- Measure representative operations independently, then measure the connected request or event flow. Component timings do not establish service capacity.
+- Keep resource use bounded according to workload and dependencies. Choose concurrency controls where they protect capacity; do not prescribe worker pools for every handler. Account for connection-pool limits across all replicas.
+- Optimize from evidence. Inspect allocations and lifetimes where relevant; bounded reusable storage is useful when its contract supports it. Do not force zero allocations or fixed arrays everywhere.
+
+## Workloads and evidence
+
+- Record toolchain, architecture, hardware, topology, dataset size, payloads, traffic mix, offered rate, concurrency, connection limits, and relevant settings.
+- Distinguish total users, active users over a stated interval, connections, in-flight requests, and requests per second. User counts alone are not a workload.
+- For load tests report offered and achieved throughput, latency percentiles, errors/timeouts/rejections, queues or dependency waits, and CPU/memory. Define latency boundaries and whether startup, warmup, and drain are included.
+- For HTTP workloads exercise representative reads and writes, realistic data, contention, and bursts. For pipelines distinguish attempted, acknowledged, and committed work. Verify output correctness as well as speed.
+- Check the load generator can supply the workload. Report whether tests use an open or closed load model and how that affects overload and latency observations.
+- Use allocation benchmarks, CPU/heap profiles, and block/mutex profiles according to the symptom. Race-detector timings are not production performance results.
+- Compare baseline and candidate under equivalent conditions, with repeated samples when needed. Report variance and limitations rather than inventing capacity guarantees.
+- Preserve reliability and consistency during optimization. Do not weaken validation, durability, or delivery contracts to improve a headline number.
