@@ -14,8 +14,8 @@ The goal is to make received live events replayable, process duplicate deliverie
 
 Stable transactional IDs fence a replaced processor. Startup restores the saved FIFO and its eviction order before consuming. Input progress is an application checkpoint in Kafka, rather than a consumer-group offset commit. A failed or uncertain transaction stops processing; restart resolves the committed state.
 
-The implementation is locally verified with unit tests, race checks, and real Kafka transaction/recovery tests. The source is synthetic, the output boundary is Kafka, and local tests use one broker. Sustained full-pipeline throughput and multi-broker failure tolerance remain future work.
+The implementation is locally verified with unit tests, race checks, and real Kafka transaction/recovery tests. The source is synthetic, the output boundary is Kafka, and local tests use one broker. A bounded live pipeline run has passed output verification; maximum sustained capacity and multi-broker failure tolerance remain unverified.
 
-Follow the [data journey](journey.md) for the overview, or the [process journey](../process/docs/journey.md) and [benchmark results](../process/BENCHMARKS.md) for implementation evidence.
+Start with the [project overview](../README.md) for the data flow and selected evidence, or follow the [process journey](../process/docs/journey.md) for implementation entry points.
 
-For a concrete implementation example, follow [deduplication from pending IDs to the committed FIFO](deduplication.md).
+For a concrete implementation example, follow [deduplication from pending IDs to the committed FIFO](../process/docs/deduplication.md).

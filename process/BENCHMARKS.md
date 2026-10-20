@@ -127,4 +127,4 @@ One verified local run on 12 October 2026, Apple M1, Go 1.27.1, one native Kafka
 | Input throughput | 3,949 records/s |
 | Committed unique-output throughput | 1,974 events/s |
 
-Exact output IDs, payloads, routing keys, and final input progress passed verification. Throughput includes startup and drain, excludes post-run verification, and reflects this configured offer rather than maximum capacity. Drain includes metadata/checkpoint observation overhead. Verification begins at Kafka-stored input and does not establish that every generated source event was delivered. See [demo instructions](docs/demo.md#bounded-live-performance-run).
+Exact output IDs, payloads, routing keys, and final input progress passed verification. Throughput includes startup and drain, excludes post-run verification, and reflects this configured offer rather than maximum capacity. Drain includes metadata/checkpoint observation overhead. Verification begins at Kafka-stored input and does not establish that every generated source event was delivered. See [demo instructions](docs/demo.md#live-performance-run).

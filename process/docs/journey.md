@@ -12,7 +12,7 @@
 
 [Processor.Process](../internal/engine/processor.go) checks event IDs against the [partition FIFO](../internal/dedup/partition.go) and the current pending batch. Duplicates are skipped. New IDs remain pending until Kafka confirms the transaction; committed membership is not changed early.
 
-See the [simple deduplication explanation](../../docs/deduplication.md) or [implementation internals](deduplication-internals.md).
+See the [deduplication walkthrough](deduplication.md) for the ring example, actual Go structures, ownership, and recovery rules.
 
 ## 4. Encode JSON
 
